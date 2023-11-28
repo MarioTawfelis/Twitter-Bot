@@ -29,7 +29,9 @@ logging.basicConfig(filename='scheduler.log',
                     level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-at = airtable.Airtable(BASE_ID, API_KEY)
+at1 = airtable.Airtable(BASE_ID, API_KEY)
+at2 = airtable.Airtable(BASE_ID, API_KEY)
+
 
 CONFIRMATION_SUBJECT = 'Your Twitter confirmation code'
 WAIT_TIME = 10
@@ -106,7 +108,7 @@ def restore_cookies(driver, path_to_dir):
     WebDriverWait(driver, WAIT_TIME).until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
 
     with open(path_to_dir, "r") as f:
-        cookies = json.loads(f.read())
+        cookies = eval(f.read())
 
     for cookie in cookies:
         driver.add_cookie(cookie)
@@ -227,7 +229,7 @@ def target_user(driver, target_username, source_username):
 
 def targets(driver, username):
     try:
-        data = at.get(table_name='tbllMwi49IydDHcTz', view='viwFE0eygV7NHbf6H')
+        data = at1.get(table_name='tbllMwi49IydDHcTz', view='viwFE0eygV7NHbf6H')
         for d in data['records']:
             fields = d['fields']
             target_username = fields['username']
@@ -246,7 +248,7 @@ def main():
     drivers = None
 
     try:
-        data = at.get(table_name='tblGCxi9uw0IkrIA9', view='viwyJ17dSyXbpsO02')
+        data = at2.get(table_name='tblGCxi9uw0IkrIA9', view='viwyJ17dSyXbpsO02')
         for d in data['records']:
             username = d['fields']['name']
             password = d['fields']['Password']
@@ -257,6 +259,7 @@ def main():
             auth = f"{d['fields']['Proxy Login']}:{d['fields']['Proxy Password']}"
 
             try:
+                logging.info(f'Attempting to login user: {username}')
                 drivers = login(username, password, email_address, g_pass, ip, auth)
                 targets(drivers, username)
             except Exception as login_exception:
