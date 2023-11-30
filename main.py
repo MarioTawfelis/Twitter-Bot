@@ -10,6 +10,7 @@ import logging
 import traceback
 
 from dotenv import load_dotenv
+from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
@@ -24,8 +25,12 @@ load_dotenv()
 BASE_ID = os.environ.get('BASE_ID')
 API_KEY = os.environ.get('API_KEY')
 
+# datetime object containing current date and time
+now = datetime.now()
+dt_string = now.strftime("%d-%m-%Y %H-%M-%S")
+
 # Configure logging
-logging.basicConfig(filename='scheduler.log',
+logging.basicConfig(filename=f'Logs/log-{dt_string}',
                     level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
